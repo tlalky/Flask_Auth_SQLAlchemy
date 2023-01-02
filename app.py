@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, logout_user, LoginManager
+from flask_login import UserMixin, login_user, logout_user, LoginManager, current_user
 from flask_migrate import Migrate
 
 
@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
+    notes = db.Column(db.Text)
 
 
 @login_manager.user_loader
@@ -43,7 +44,7 @@ def login():
             login_user(user)
             return redirect(url_for('logged_in'))
         else:
-            return render_template('login.html', error='Invalid username or password')
+            return render_template('login.html', error='Invalid username or password!')
     return render_template('login.html')
 
 
@@ -66,9 +67,13 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/logged_in')
+@app.route('/logged_in', methods=['GET', 'POST'])
 def logged_in():
-    return render_template('logged_in.html')
+    if request.method == 'POST':
+        # update the notes for the logged in user
+        current_user.notes = request.form['notes']
+        db.session.commit()
+    return render_template('logged_in.html', notes=current_user.notes)
 
 
 @app.route('/logout')

@@ -1,9 +1,13 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <h1>
-        You are successfully logged in!
-    </h1>
-        <a href="{{url_for('logout')}}">Log out</a><br>
+    <h1>You are successfully logged in!</h1><br>
+    <div>Here are your notes</div>
+    <form method="post">
+        <textarea name="notes" cols="70" rows="15"> {% if notes %}{{notes}}{% endif %}
+        </textarea><br>
+        <input type="submit" value="Save">
+    </form>
+    <a href="{{url_for('logout')}}">Log out</a><br>
 
 {% endblock %}
