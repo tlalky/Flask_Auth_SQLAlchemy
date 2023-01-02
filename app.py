@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, logout_user
+from flask_login import UserMixin, login_user, logout_user, LoginManager
 from flask_migrate import Migrate
-from flask_login import LoginManager
 
 
 app = Flask(__name__)
@@ -53,6 +52,9 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        password2 = request.form['password2']
+        if password != password2:
+            return render_template('register.html', error='Passwords must match! Please try again.')
         valid_user = User.query.filter_by(username=username).first()  # check if user with username provided exists
         if not valid_user:  # if does not exist create new user and add it to db
             user = User(username=username, password=password)
