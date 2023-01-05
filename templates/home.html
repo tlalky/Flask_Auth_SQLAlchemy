@@ -1,10 +1,21 @@
-{% extends "layout.html" %}
-
-{% block body %}
-    <h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
+</head>
+<body>
+    <div class="auth">
+          <h1 class="auth__header">
         Login Authentication System in Flask!<br>
     </h1>
-        <a href="{{url_for('login')}}">Login Page</a><br>
-        <a href="{{url_for('register')}}">Register Page</a><br>
+        <div class="auth-buttons">
+            <a class="auth__button auth__button--login" href="{{url_for('login')}}">Login Page</a>
+            <a class="auth__button auth__button--register" href="{{url_for('register')}}">Register Page</a>
+        </div>
 
-{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

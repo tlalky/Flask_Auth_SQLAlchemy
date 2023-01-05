@@ -1,11 +1,15 @@
 {% extends "layout.html" %}
 
 {% block body %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style_logged_in.css') }}">
     <h1>You are successfully logged in!</h1><br>
     <div>Here are your notes</div>
     <form method="post">
-        <textarea name="notes" cols="70" rows="15"> {% if notes %}{{notes}}{% endif %}
+        <textarea name="notes" cols="70" rows="15" style="color: gray; font-weight: bold;"> {% if notes %}{{notes}}{% endif %}
         </textarea><br>
+        <!-- <input type="file" name="image"><br>
+        <div><img src="data:image/png;base64,{{ files }}" alt="" class="page"></div>
+        -->
         <input type="submit" value="Save">
     </form>
     <a href="{{url_for('logout')}}">Log out</a><br>
