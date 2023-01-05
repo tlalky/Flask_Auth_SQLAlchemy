@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, logout_user, LoginManager, current_user
 from flask_migrate import Migrate
+# from sqlalchemy import event
+# import base64
 
 
 app = Flask(__name__)
@@ -22,6 +24,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     notes = db.Column(db.Text)
+    #files = db.Column(db.LargeBinary)
 
 
 @login_manager.user_loader
@@ -31,11 +34,13 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
+    logout_user()
     return render_template('home.html')
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    logout_user()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -50,6 +55,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    logout_user()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -69,17 +75,31 @@ def register():
 
 @app.route('/logged_in', methods=['GET', 'POST'])
 def logged_in():
-    if request.method == 'POST':
-        # update the notes for the logged in user
-        current_user.notes = request.form['notes']
-        db.session.commit()
-    return render_template('logged_in.html', notes=current_user.notes)
+
+    try:
+        if request.method == 'POST':
+            # update the notes for the logged in user
+            current_user.notes = request.form['notes']
+            #files = request.files.getlist('file')
+            db.session.commit()
+            #if files:
+                #event.files = files[0].file.read()
+        return render_template('logged_in.html', notes=current_user.notes)
+    except AttributeError:
+        return render_template('login.html', error='To access your notes you need to login first!')
 
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+
+"""@app.route('/read')
+def read():
+    files = User.query.filter_by(id=User.id).first()
+    encoded_image = base64.b64encode(files.img)
+    return render_template('logged_in.html', files=encoded_image)"""
 
 
 if __name__ == '__main__':
